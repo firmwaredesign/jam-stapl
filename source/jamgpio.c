@@ -12,18 +12,6 @@
 #include <unistd.h>
 #include <wiringPi.h>
 
-#define BCM2708_PERI_BASE        0x20000000
-#define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000) /* GPIO controller */
-#define GPIO_LEN                 0xB4 // need only to map B4 registers
-
-//gpio registers
-static const unsigned int GPFSET0 = 7;
-static const unsigned int GPFCLR0 = 10;
-static const unsigned int GPFLEV0 = 13;
-static const unsigned int GPFSEL0 = 0;
-static const unsigned int GPFSEL1 = 1;
-static const unsigned int GPFSEL2 = 2;
-
 #define TCK 7  //bcm GPIO 7, P1 pin 26 (out)
 #define TDI 8  //bcm GPIO 8, P1 pin 24 (out)
 #define TMS 25 //bcm GPIO 25, P1 pin 22 (out)
@@ -35,61 +23,13 @@ static const unsigned int GPFSEL2 = 2;
 
 #include "jamgpio.h"
 
-volatile unsigned int *gpio = NULL;
-
 void gpio_init()
 {
-	int mem_fd = 0;
-	void *regAddrMap = MAP_FAILED;
 	wiringPiSetupGpio();
-
-	/* open /dev/mem.....need to run program as root i.e. use sudo or su */
-	if (!mem_fd)
-	{
-		if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0)
-		{
-			perror("can't open /dev/mem");
-			exit (1);
-		}
-	}
-
-	/* mmap IO */
-	regAddrMap = mmap(
-	  NULL,             //Any address in our space will do
-	  GPIO_LEN,         //Map length
-	  PROT_READ|PROT_WRITE|PROT_EXEC,// Enable reading & writing to mapped memory
-	  MAP_SHARED|MAP_LOCKED,       //Shared with other processes
-	  mem_fd,           //File to map
-	  GPIO_BASE         //Offset to base address
-	);
-
-	if (regAddrMap == MAP_FAILED)
-	{
-		perror("mmap error");
-		close(mem_fd);
-		exit (1);
-	}
-
-	if(close(mem_fd) < 0)
-	{ //No need to keep mem_fd open after mmap
-	  //i.e. we can close /dev/mem
-		perror("couldn't close /dev/mem file descriptor");
-		exit(1);
-	}
-	
-	gpio = (volatile unsigned int*) regAddrMap;
-
-	printf("[RPi] Raspberry PI gpio mapped at 0x%p\n", gpio);
 }
 
 void gpio_exit()
 {
-	//unmap GPIO registers (physical memory)  from process memory
-	if(munmap((void*)gpio, GPIO_LEN) < 0)
-	{
-		perror("munmap (gpio) failed");
-		exit(1);
-	}
 }
 
 /*
@@ -101,9 +41,6 @@ void gpio_exit()
  */
 void gpio_setPinDir(unsigned int pinnum, const unsigned int dir)
 {
-	if (gpio == NULL)
-		return;
-
 	if (dir == OUTPUT)
 	{
 		pinMode(pinnum, OUTPUT);
