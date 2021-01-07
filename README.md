@@ -1,5 +1,37 @@
-jam-stapl
-=========
+jam-stapl for Raspberry Pi 4
+============================
+
+This is a fork of https://github.com/margro/jam-stapl repository adding support for Raspberry Pi 4.  
+This version is using **wiringPi** library (version >= 2.52), but should
+easily work on other Raspberry Pi versions.
+
+Installing wiringPi 2.52
+========================
+
+The winingPi shipped with your Linux version my be to old.  
+We need wiringPi version **2.52** or higher.
+
+1. Check current version
+```
+gpio -v
+```
+
+2. If version < 2.52, remove current version
+```
+sudo apt purge wiringpi
+```
+
+3. Download and install new version
+```
+mkdir tmp
+cd /tmp
+wget https://project-downloads.drogon.net/wiringpi-latest.deb
+sudo dpkg -i wiringpi-latest.deb
+```
+
+
+Original README
+===============
 
 Altera Jam STAPL Player with support for 64-bit Windows versions.
 
