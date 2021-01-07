@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <wiringPi.h>
 
 #define BCM2708_PERI_BASE        0x20000000
 #define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000) /* GPIO controller */
@@ -40,6 +41,7 @@ void gpio_init()
 {
 	int mem_fd = 0;
 	void *regAddrMap = MAP_FAILED;
+	wiringPiSetupGpio();
 
 	/* open /dev/mem.....need to run program as root i.e. use sudo or su */
 	if (!mem_fd)
@@ -104,38 +106,11 @@ void gpio_setPinDir(unsigned int pinnum, const unsigned int dir)
 
 	if (dir == OUTPUT)
 	{
-		switch(pinnum/10) {	
-			case 0:
-				*(gpio + GPFSEL0) &= ~(7<<(((pinnum)%10)*3));
-				*(gpio + GPFSEL0) |=  (1<<(((pinnum)%10)*3));
-				break;
-			case 1:
-				*(gpio + GPFSEL1) &= ~(7<<(((pinnum)%10)*3));
-				*(gpio + GPFSEL1) |=  (1<<(((pinnum)%10)*3));
-				break;
-			case 2:
-				*(gpio + GPFSEL2) &= ~(7<<(((pinnum)%10)*3));
-				*(gpio + GPFSEL2) |=  (1<<(((pinnum)%10)*3));
-				break;
-			default:
-				break;
-		}
+		pinMode(pinnum, OUTPUT);
 	}
 	else
 	{
-		switch(pinnum/10) {	
-			case 0:
-				*(gpio + GPFSEL0) &= ~(7<<(((pinnum)%10)*3));
-				break;
-			case 1:
-				*(gpio + GPFSEL1) &= ~(7<<(((pinnum)%10)*3));
-				break;
-			case 2:
-				*(gpio + GPFSEL2) &= ~(7<<(((pinnum)%10)*3));
-				break;
-			default:
-				break;
-		}
+		pinMode(pinnum, INPUT);
 	}
 }
 
@@ -150,8 +125,7 @@ unsigned int gpio_readPin(unsigned int pinnum)
 {
 	unsigned int retVal = 0;
 	
-	if ((*(gpio + GPFLEV0) & (1 << pinnum)) != 0)
-		retVal = 1;
+	retVal = digitalRead(pinnum);
 	
 	return retVal;
 }
@@ -168,9 +142,13 @@ unsigned int gpio_readPin(unsigned int pinnum)
 void gpio_writePin(unsigned int pinnum, const unsigned int pinstate)
 {
 	if(pinstate == HIGH)
-		*(gpio + GPFSET0) = (1 << pinnum);
+	{
+		digitalWrite(pinnum, HIGH);
+	}
 	else
-		*(gpio + GPFCLR0) = (1 << pinnum);
+	{
+		digitalWrite(pinnum, LOW);
+	}
 }
 
 void gpio_init_jtag()
