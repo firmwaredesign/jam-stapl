@@ -12,14 +12,14 @@
 #include <unistd.h>
 #include <wiringPi.h>
 
-#define TCK 7  //bcm GPIO 7, P1 pin 26 (out)
-#define TDI 8  //bcm GPIO 8, P1 pin 24 (out)
-#define TMS 25 //bcm GPIO 25, P1 pin 22 (out)
-#define TDO 24 //bcm GPIO 24, P1 pin 18 (in)
-#define TCK_P1PIN 26 //bcm GPIO 7, P1 pin 26 (out)
-#define TDI_P1PIN 24 //bcm GPIO 8, P1 pin 24 (out)
-#define TMS_P1PIN 22 //bcm GPIO 25, P1 pin 22 (out)
-#define TDO_P1PIN 18 //bcm GPIO 24, P1 pin 18 (in)
+#define TCK 21  //bcm GPIO 21, P1 pin 40 (out)
+#define TDI 16  //bcm GPIO 16, P1 pin 36 (out)
+#define TMS 19 //bcm GPIO 19, P1 pin 35 (out)
+#define TDO 20 //bcm GPIO 20, P1 pin 38 (in)
+#define TCK_P1PIN 40 //bcm GPIO 21, P1 pin 40 (out)
+#define TDI_P1PIN 36 //bcm GPIO 16, P1 pin 36 (out)
+#define TMS_P1PIN 35 //bcm GPIO 19, P1 pin 35 (out)
+#define TDO_P1PIN 38 //bcm GPIO 20, P1 pin 38 (in)
 
 #include "jamgpio.h"
 
