@@ -49,6 +49,7 @@ typedef unsigned short WORD;
 typedef unsigned long DWORD;
 #define TRUE 1
 #define FALSE 0
+#include <wiringPi.h>
 #endif
 
 #include <stdio.h>
@@ -307,13 +308,13 @@ int jam_seek(long offset)
 	return (return_code);
 }
 
+
 int jam_jtag_io(int tms, int tdi, int read_tdo)
 {
 	int tdo = 0;
 	int i = 0;
 	int result = 0;
 	char ch_data = 0;
-
 	if (!jtag_hardware_initialized)
 	{
 		initialize_jtag_hardware();
@@ -390,7 +391,9 @@ int jam_jtag_io(int tms, int tdi, int read_tdo)
 
 		// Pulse TCK
 		gpio_set_tck();
+		delayMicroseconds(1);
 		gpio_clear_tck();
+		delayMicroseconds(1);
 #else
 		/* parallel port interface not available */
 		tdo = 0;
