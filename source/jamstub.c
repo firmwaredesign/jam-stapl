@@ -390,6 +390,7 @@ int jam_jtag_io(int tms, int tdi, int read_tdo)
 		}
 
 		// Pulse TCK
+		delayMicroseconds(1);
 		gpio_set_tck();
 		delayMicroseconds(1);
 		gpio_clear_tck();
